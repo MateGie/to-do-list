@@ -844,3 +844,19 @@ select.form-control {
         transform: translateX(100%);
     }
 }
+
+footer {
+  margin-top: 2rem;
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+footer a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
