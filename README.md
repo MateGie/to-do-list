@@ -3,8 +3,10 @@
 ## Description
 A simple web app to manage your daily tasks. Add, complete, delete tasks easily.
 
-## Demo
-picture
+## Light and dark mode support
+![Light mode](./assets/light.png)
+![Dark mode](./assets/dark.png)
+
 
 ## Technologies
 - HTML
