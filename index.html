@@ -1,19 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>To-Do List</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My To-Do List</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container">
-    <h1>My list</h1>
-    <form id="task-form">
-      <input type="text" id="task-input" placeholder="New task" required />
-      <button type="submit">Add</button>
-    </form>
-    <ul id="task-list"></ul>
-  </main>
-  <script src="app.js"></script>
+    <div class="container">
+        <main class="todo-app">
+            <header class="todo-header">
+                <h1>My To-Do List</h1>
+                <div class="task-counter">
+                    <span id="taskCounter">0 tasks</span>
+                </div>
+            </header>
+            
+            <div class="todo-input-section">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="taskInput" 
+                        class="form-control task-input" 
+                        placeholder="Add a new task..."
+                        maxlength="100"
+                        aria-label="New task input"
+                    >
+                    <button 
+                        id="addTaskBtn" 
+                        class="btn btn--primary add-btn"
+                        aria-label="Add task"
+                    >
+                        Add
+                    </button>
+                </div>
+            </div>
+            
+            <div class="todo-list-section">
+                <ul id="taskList" class="task-list" role="list">
+                    <!-- Tasks will be dynamically added here -->
+                </ul>
+                
+                <div id="emptyState" class="empty-state">
+                    <p>No tasks yet. Add one above to get started!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
 </body>
 </html>
