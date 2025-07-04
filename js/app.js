@@ -1,193 +1,164 @@
-// Todo List Application
+// To-Do List Application
 class TodoApp {
     constructor() {
-        this.tasks = [];
-        this.taskIdCounter = 1;
+        this.todos = [];
+        this.STORAGE_KEY = 'todos';
+        
+        // DOM elements
+        this.todoList = document.getElementById('todo-list');
+        this.newTaskInput = document.getElementById('new-task-input');
+        this.addTaskBtn = document.getElementById('add-task-btn');
+        this.taskCount = document.getElementById('task-count');
+        this.emptyState = document.getElementById('empty-state');
+        
         this.init();
     }
-
+    
     init() {
-        this.bindElements();
-        this.bindEvents();
-        this.loadInitialTasks();
-        this.updateTaskCounter();
-        this.updateEmptyState();
-    }
-
-    bindElements() {
-        this.taskInput = document.getElementById('taskInput');
-        this.addTaskBtn = document.getElementById('addTaskBtn');
-        this.taskList = document.getElementById('taskList');
-        this.taskCounter = document.getElementById('taskCounter');
-        this.emptyState = document.getElementById('emptyState');
-    }
-
-    bindEvents() {
-        // Add task button click
-        this.addTaskBtn.addEventListener('click', () => this.addTask());
+        // Load tasks from localStorage on page load
+        this.loadTasks();
         
-        // Enter key in input field
-        this.taskInput.addEventListener('keypress', (e) => {
+        // Event listeners
+        this.addTaskBtn.addEventListener('click', () => this.addTask());
+        this.newTaskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.addTask();
             }
         });
         
-        // ESC key to clear input
-        this.taskInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.clearInput();
+        // Initial render
+        this.renderTasks();
+        this.updateTaskCount();
+    }
+    
+    // Load tasks from localStorage
+    loadTasks() {
+        try {
+            const storedTasks = localStorage.getItem(this.STORAGE_KEY);
+            if (storedTasks) {
+                this.todos = JSON.parse(storedTasks);
+            } else {
+                // Start with empty array - no initial tasks
+                this.todos = [];
             }
-        });
+        } catch (error) {
+            console.error('Error loading tasks from localStorage:', error);
+            this.todos = [];
+        }
+    }
+    
+    // Save tasks to localStorage
+    saveTasks() {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.todos));
+        } catch (error) {
+            console.error('Error saving tasks to localStorage:', error);
+        }
+    }
+    
+    // Add a new task
+    addTask() {
+        const taskText = this.newTaskInput.value.trim();
         
         // Input validation
-        this.taskInput.addEventListener('input', () => {
-            this.validateInput();
-        });
-    }
-
-    loadInitialTasks() {
-        // Load sample tasks from the provided data
-        const sampleTasks = [
-            {
-                id: "1",
-                text: "Learn JavaScript",
-                completed: false
-            },
-            {
-                id: "2", 
-                text: "Build a todo app",
-                completed: true
-            }
-        ];
-        
-        // Add sample tasks to demonstrate functionality
-        sampleTasks.forEach(task => {
-            this.tasks.push({
-                id: task.id,
-                text: task.text,
-                completed: task.completed
-            });
-            this.taskIdCounter = Math.max(this.taskIdCounter, parseInt(task.id) + 1);
-        });
-        
-        this.renderTasks();
-    }
-
-    addTask() {
-        const taskText = this.taskInput.value.trim();
-        
-        if (!this.isValidTask(taskText)) {
-            this.showInputError();
+        if (!taskText) {
+            this.newTaskInput.focus();
             return;
         }
-
+        
+        // Create new task object
         const newTask = {
-            id: this.taskIdCounter.toString(),
+            id: Date.now(), // Simple ID generation
             text: taskText,
             completed: false
         };
-
-        this.tasks.push(newTask);
-        this.taskIdCounter++;
         
+        // Add to todos array
+        this.todos.push(newTask);
+        
+        // Save to localStorage immediately
+        this.saveTasks();
+        
+        // Clear input
+        this.newTaskInput.value = '';
+        
+        // Re-render and update count
         this.renderTasks();
-        this.clearInput();
-        this.updateTaskCounter();
-        this.updateEmptyState();
+        this.updateTaskCount();
         
-        // Focus back to input for better UX
-        this.taskInput.focus();
+        // Focus back on input for easy multiple additions
+        this.newTaskInput.focus();
     }
-
-    isValidTask(text) {
-        return text.length > 0 && text.length <= 100;
-    }
-
-    showInputError() {
-        this.taskInput.style.borderColor = 'var(--color-error)';
-        this.taskInput.focus();
-        
-        setTimeout(() => {
-            this.taskInput.style.borderColor = '';
-        }, 2000);
-    }
-
-    validateInput() {
-        const text = this.taskInput.value.trim();
-        if (text.length > 100) {
-            this.taskInput.style.borderColor = 'var(--color-warning)';
-        } else {
-            this.taskInput.style.borderColor = '';
-        }
-    }
-
-    clearInput() {
-        this.taskInput.value = '';
-        this.taskInput.style.borderColor = '';
-    }
-
+    
+    // Toggle task completion
     toggleTask(taskId) {
-        const task = this.tasks.find(t => t.id === taskId);
+        const task = this.todos.find(t => t.id === taskId);
         if (task) {
             task.completed = !task.completed;
-            this.renderTasks();
-            this.updateTaskCounter();
-        }
-    }
-
-    deleteTask(taskId) {
-        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-        
-        if (taskElement) {
-            taskElement.classList.add('removing');
             
-            setTimeout(() => {
-                this.tasks = this.tasks.filter(t => t.id !== taskId);
-                this.renderTasks();
-                this.updateTaskCounter();
-                this.updateEmptyState();
-            }, 250);
+            // Save to localStorage immediately
+            this.saveTasks();
+            
+            // Re-render and update count
+            this.renderTasks();
+            this.updateTaskCount();
         }
     }
-
-    renderTasks() {
-        this.taskList.innerHTML = '';
+    
+    // Delete a task
+    deleteTask(taskId) {
+        // Remove from todos array
+        this.todos = this.todos.filter(t => t.id !== taskId);
         
-        this.tasks.forEach((task, index) => {
-            const taskElement = this.createTaskElement(task, index);
-            this.taskList.appendChild(taskElement);
+        // Save to localStorage immediately
+        this.saveTasks();
+        
+        // Re-render and update count
+        this.renderTasks();
+        this.updateTaskCount();
+    }
+    
+    // Render all tasks
+    renderTasks() {
+        // Clear existing tasks
+        this.todoList.innerHTML = '';
+        
+        // Show/hide empty state
+        if (this.todos.length === 0) {
+            this.emptyState.style.display = 'block';
+            this.todoList.style.display = 'none';
+        } else {
+            this.emptyState.style.display = 'none';
+            this.todoList.style.display = 'block';
+        }
+        
+        // Render each task
+        this.todos.forEach(task => {
+            const taskElement = this.createTaskElement(task);
+            this.todoList.appendChild(taskElement);
         });
     }
-
-    createTaskElement(task, index) {
+    
+    // Create a task element
+    createTaskElement(task) {
         const li = document.createElement('li');
-        li.className = `task-item ${task.completed ? 'completed' : ''}`;
-        li.setAttribute('data-task-id', task.id);
-        li.setAttribute('role', 'listitem');
-        
-        // Add staggered animation delay
-        li.style.animationDelay = `${index * 50}ms`;
+        li.className = `todo-item ${task.completed ? 'completed' : ''}`;
+        li.setAttribute('data-id', task.id);
         
         li.innerHTML = `
             <input 
                 type="checkbox" 
-                class="task-checkbox" 
+                class="todo-checkbox" 
                 ${task.completed ? 'checked' : ''}
-                aria-label="Mark task as ${task.completed ? 'incomplete' : 'complete'}"
             >
-            <span class="task-text ${task.completed ? 'completed' : ''}">${this.escapeHtml(task.text)}</span>
-            <button 
-                class="delete-btn" 
-                aria-label="Delete task: ${this.escapeHtml(task.text)}"
-                title="Delete task"
-            >
-                Delete
-            </button>
+            <span class="todo-text ${task.completed ? 'completed' : ''}">${this.escapeHtml(task.text)}</span>
+            <div class="todo-actions">
+                <button class="delete-btn" title="Delete task">Delete</button>
+            </div>
         `;
-
-        // Bind events
-        const checkbox = li.querySelector('.task-checkbox');
+        
+        // Add event listeners
+        const checkbox = li.querySelector('.todo-checkbox');
         const deleteBtn = li.querySelector('.delete-btn');
         
         checkbox.addEventListener('change', () => {
@@ -195,88 +166,37 @@ class TodoApp {
         });
         
         deleteBtn.addEventListener('click', () => {
-            this.deleteTask(task.id);
+            // Add removing animation
+            li.classList.add('removing');
+            setTimeout(() => {
+                this.deleteTask(task.id);
+            }, 300);
         });
-
+        
         return li;
     }
-
+    
+    // Update task counter
+    updateTaskCount() {
+        const totalTasks = this.todos.length;
+        const completedTasks = this.todos.filter(t => t.completed).length;
+        
+        if (totalTasks === 0) {
+            this.taskCount.textContent = '0';
+        } else {
+            this.taskCount.textContent = `${totalTasks} (${completedTasks} completed)`;
+        }
+    }
+    
+    // Utility function to escape HTML
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-
-    updateTaskCounter() {
-        const totalTasks = this.tasks.length;
-        const completedTasks = this.tasks.filter(t => t.completed).length;
-        const pendingTasks = totalTasks - completedTasks;
-        
-        let counterText = '';
-        if (totalTasks === 0) {
-            counterText = '0 tasks';
-        } else if (totalTasks === 1) {
-            counterText = `1 task${completedTasks === 1 ? ' (completed)' : ''}`;
-        } else {
-            counterText = `${totalTasks} tasks`;
-            if (completedTasks > 0) {
-                counterText += ` (${completedTasks} completed)`;
-            }
-        }
-        
-        this.taskCounter.textContent = counterText;
-    }
-
-    updateEmptyState() {
-        if (this.tasks.length === 0) {
-            this.emptyState.classList.remove('hidden');
-            this.taskList.style.display = 'none';
-        } else {
-            this.emptyState.classList.add('hidden');
-            this.taskList.style.display = 'block';
-        }
-    }
-
-    // Public method to get current tasks (for debugging)
-    getTasks() {
-        return this.tasks;
-    }
-
-    // Public method to clear all tasks
-    clearAllTasks() {
-        this.tasks = [];
-        this.renderTasks();
-        this.updateTaskCounter();
-        this.updateEmptyState();
-    }
 }
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.todoApp = new TodoApp();
-    
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        // Focus input when user starts typing (if not already focused)
-        if (e.key.length === 1 && 
-            document.activeElement !== window.todoApp.taskInput && 
-            !document.activeElement.matches('input, textarea, button')) {
-            window.todoApp.taskInput.focus();
-        }
-    });
-});
-
-// Make sure the app works even if there are errors
-window.addEventListener('error', (e) => {
-    console.error('Todo App Error:', e.error);
-});
-
-// Handle page visibility changes
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-        // Refresh task counter when page becomes visible
-        if (window.todoApp) {
-            window.todoApp.updateTaskCounter();
-        }
-    }
+    new TodoApp();
 });
