@@ -3,6 +3,9 @@
 ## Description
 A simple web app to manage your daily tasks. Add, complete, delete tasks easily.
 
+## Demo
+picture
+
 ## Technologies
 - HTML
 - CSS
