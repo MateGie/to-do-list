@@ -196,7 +196,101 @@ class TodoApp {
     }
 }
 
+// Theme Toggle JavaScript (updated to work with your CSS)
+class ThemeManager {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.loadTheme();
+    this.setupToggleButton();
+    this.respectSystemPreference();
+  }
+
+  // Load saved theme or detect system preference
+  loadTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme) {
+      this.setTheme(savedTheme);
+    } else {
+      // Check system preference
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      this.setTheme(systemPrefersDark ? 'dark' : 'light');
+    }
+  }
+
+  // Set theme and update UI
+  setTheme(theme) {
+    document.documentElement.setAttribute('data-color-scheme', theme);
+    localStorage.setItem('theme', theme);
+    this.updateToggleButton(theme);
+  }
+
+  // Update toggle button appearance and accessibility
+  updateToggleButton(theme) {
+    const button = document.getElementById('theme-toggle');
+    if (button) {
+      const isLight = theme === 'light';
+      button.setAttribute('aria-label', 
+        isLight ? 'Switch to dark mode' : 'Switch to light mode'
+      );
+      
+      // Add animation class for smooth icon transition
+      const icon = button.querySelector('.toggle-icon');
+      if (icon) {
+        icon.style.animation = 'iconSpin 0.3s ease-in-out';
+        setTimeout(() => {
+          icon.style.animation = '';
+        }, 300);
+      }
+    }
+  }
+
+  // Setup toggle button event listener
+  setupToggleButton() {
+    const toggleButton = document.getElementById('theme-toggle');
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        this.toggleTheme();
+      });
+
+      // Keyboard support
+      toggleButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.toggleTheme();
+        }
+      });
+    }
+  }
+
+  toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-color-scheme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    this.setTheme(newTheme);
+  }
+
+  // Listen for system theme changes
+  respectSystemPreference() {
+    window.matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', (e) => {
+        // Only auto-switch if user hasn't manually set a preference
+        if (!localStorage.getItem('theme')) {
+          this.setTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+  }
+
+  // Get current theme
+  getCurrentTheme() {
+    return document.documentElement.getAttribute('data-color-scheme') || 'light';
+  }
+}
+
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new TodoApp();
+    new ThemeManager();
 });
