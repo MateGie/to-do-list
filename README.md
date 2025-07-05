@@ -2,7 +2,7 @@
 
 ## Description
 
-A simple web app to manage your daily tasks. Add, complete, delete tasks easily.
+A simple web app to manage your daily tasks. Add, complete, filter, delete tasks easily.
 
 ## Light and dark mode support
 
