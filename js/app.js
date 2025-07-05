@@ -292,10 +292,5 @@ class ThemeManager {
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new ThemeManager();
-    if (
-        window.location.pathname == '/to-do-list/' ||
-        window.location.pathname.endsWith('/index.html')
-    ) {
-        new TodoApp();
-    }
+    new TodoApp();
 });
