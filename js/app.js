@@ -293,7 +293,7 @@ class ThemeManager {
 document.addEventListener('DOMContentLoaded', () => {
     new ThemeManager();
     if (
-        window.location.pathname === '/' ||
+        window.location.pathname == '/to-do-list/' ||
         window.location.pathname.endsWith('/index.html')
     ) {
         new TodoApp();
