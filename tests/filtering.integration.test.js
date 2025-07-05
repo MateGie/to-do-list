@@ -36,7 +36,7 @@ describe('Filter Button Interactions', () => {
 describe('Task List Filtering Display', () => {
   test('should display only active tasks when "active" filter is active', () => {
     app.todos = [
-      { id: 1, text: 'Buy groceries', completed: false },
+      { id: 1, text: 'Buy groceriesss', completed: false },
       { id: 2, text: 'Walk the dog', completed: true }
     ];
 
