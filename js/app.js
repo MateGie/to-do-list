@@ -291,6 +291,6 @@ class ThemeManager {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new TodoApp();
     new ThemeManager();
+    new TodoApp();
 });
