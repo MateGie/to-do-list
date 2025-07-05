@@ -4,7 +4,7 @@ name: Test and deploy website
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ["main", "deploy-test"]
   pull_request:
     branches: ["main"]
 
