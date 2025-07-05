@@ -26,6 +26,7 @@ A simple web app to manage your daily tasks. Add, complete, delete tasks easily.
 - Add new tasks
 - Mark tasks as completed
 - Delete tasks
+- Switch the theme
 
 ## Author
 Mateusz Gieszczyk
