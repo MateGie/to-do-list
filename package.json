@@ -1,0 +1,25 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "A simple to-do list",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MateGie/to-do-list.git"
+  },
+  "keywords": [
+    "app"
+  ],
+  "author": "Mateusz Gieszczyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MateGie/to-do-list/issues"
+  },
+  "homepage": "https://github.com/MateGie/to-do-list#readme",
+  "devDependencies": {
+    "jest": "^30.0.4"
+  }
+}
