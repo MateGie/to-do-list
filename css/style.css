@@ -659,7 +659,7 @@ select.form-control {
 }
 
 /* Todo App Specific Styles */
-.todo-app {
+.todo-app, .todo-nav{
     max-width: 600px;
     margin: 0 auto;
     padding: var(--space-32) var(--space-16);
@@ -700,7 +700,11 @@ select.form-control {
 }
 
 .todo-list-section {
-    min-height: 300px;
+    min-height: 400px;
+}
+
+.todo-nav {
+    min-height: 504px;
 }
 
 .todo-list {
@@ -927,11 +931,20 @@ footer {
   border-top: 1px solid #ddd;
 }
 
-footer a {
-  color: #0066cc;
+footer a, nav a {
+  color: var(--color-primary);
   text-decoration: none;
 }
 
-footer a:hover {
+footer a:hover, nav a:hover {
   text-decoration: underline;
+}
+nav a {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-2xl);
+  transition: all var(--duration-normal) var(--ease-standard);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-8);
+  display: inline-block;
+  position: relative;
 }
