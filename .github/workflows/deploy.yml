@@ -79,4 +79,4 @@ jobs:
         uses: actions/checkout@v4
       - name: Deploy to self hosted
         run: |
-          cp -r ./src/* /var/www/html/
+          cp -r ./* /var/www/html/
