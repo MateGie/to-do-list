@@ -2,6 +2,7 @@
 class TodoApp {
     constructor() {
         this.todos = [];
+        this.currentFilter = 'all';
         this.STORAGE_KEY = 'todos';
         
         // DOM elements
@@ -10,6 +11,7 @@ class TodoApp {
         this.addTaskBtn = document.getElementById('add-task-btn');
         this.taskCount = document.getElementById('task-count');
         this.emptyState = document.getElementById('empty-state');
+        this.filterBtns = document.querySelectorAll('.filter-btn');
         
         this.init();
     }
@@ -25,12 +27,31 @@ class TodoApp {
                 this.addTask();
             }
         });
+        this.filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.setFilter(e.target.dataset.filter);
+            });
+        });
         
         // Initial render
         this.renderTasks();
         this.updateTaskCount();
     }
     
+    // Filter method
+    setFilter(filter) {
+        this.currentFilter = filter;
+      
+        // Update active filter button
+        this.filterBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+      
+      // Re-render tasks with new filter
+        this.renderTasks();
+        this.updateTaskCount();
+    }
+
     // Load tasks from localStorage
     loadTasks() {
         try {
@@ -122,22 +143,51 @@ class TodoApp {
     renderTasks() {
         // Clear existing tasks
         this.todoList.innerHTML = '';
+        const filteredTasks = this.getFilteredTasks();
         
         // Show/hide empty state
         if (this.todos.length === 0) {
             this.emptyState.style.display = 'block';
             this.todoList.style.display = 'none';
+
+            // Update empty state message based on filter
+            const emptyMessage = this.getEmptyStateMessage();
+            this.emptyState.querySelector('p').textContent = emptyMessage;
         } else {
             this.emptyState.style.display = 'none';
             this.todoList.style.display = 'block';
         }
         
-        // Render each task
-        this.todos.forEach(task => {
+        // Render filtered tasks
+        filteredTasks.forEach(task => {
             const taskElement = this.createTaskElement(task);
-            this.todoList.appendChild(taskElement);
+                this.todoList.appendChild(taskElement);
         });
     }
+
+     // Add method to get filtered tasks
+  getFilteredTasks() {
+    switch (this.currentFilter) {
+      case 'active':
+        return this.todos.filter(task => !task.completed);
+      case 'completed':
+        return this.todos.filter(task => task.completed);
+      default:
+        return this.todos;
+    }
+  }
+
+  // Add method to get appropriate empty state message
+  getEmptyStateMessage() {
+    switch (this.currentFilter) {
+      case 'active':
+        return 'No active tasks. Great job!';
+      case 'completed':
+        return 'No completed tasks yet.';
+      default:
+        return 'No tasks yet. Add one above to get started!';
+    }
+  }
     
     // Create a task element
     createTaskElement(task) {
@@ -178,21 +228,30 @@ class TodoApp {
     
     // Update task counter
     updateTaskCount() {
-        const totalTasks = this.todos.length;
-        const completedTasks = this.todos.filter(t => t.completed).length;
-        
-        if (totalTasks === 0) {
-            this.taskCount.textContent = '0';
-        } else {
-            this.taskCount.textContent = `${totalTasks} (${completedTasks} completed)`;
-        }
+    const filteredTasks = this.getFilteredTasks();
+    const activeCount = this.todos.filter(task => !task.completed).length;
+    
+    let countText;
+    if (this.currentFilter === 'all') {
+      countText = `${this.todos.length} total task${this.todos.length !== 1 ? 's' : ''} (${activeCount} active)`;
+    } else if (this.currentFilter === 'active') {
+      countText = `${activeCount} active task${activeCount !== 1 ? 's' : ''}`;
+    } else {
+      const completedCount = this.todos.filter(task => task.completed).length;
+      countText = `${completedCount} completed task${completedCount !== 1 ? 's' : ''}`;
     }
+    
+    this.taskCount.textContent = countText;
+  }
     
     // Utility function to escape HTML
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+    getCurrentFilter() {
+        return this.currentFilter;
     }
 }
 
@@ -294,3 +353,5 @@ document.addEventListener('DOMContentLoaded', () => {
     new ThemeManager();
     new TodoApp();
 });
+
+module.exports = TodoApp;
