@@ -659,7 +659,7 @@ select.form-control {
 }
 
 /* Todo App Specific Styles */
-.todo-app, .todo-nav{
+.todo-app, .todo-nav, .todo-about{
     max-width: 600px;
     margin: 0 auto;
     padding: var(--space-32) var(--space-16);
@@ -703,7 +703,7 @@ select.form-control {
     min-height: 400px;
 }
 
-.todo-nav {
+.todo-nav, .todo-about {
     min-height: 504px;
 }
 
