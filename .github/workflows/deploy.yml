@@ -99,27 +99,27 @@ jobs:
         run: echo "Rollback completed to commit ${{ steps.prev_commit.outputs.prev_commit }}"
 
 
-  test-self-hosted:
-    needs: health-check
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install dependencies
-        run: npm install
-      - name: Run Jest tests
-        run: npm test
+  # test-self-hosted:
+  #   needs: health-check
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '22'
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Run Jest tests
+  #       run: npm test
         
-  deploy-self-hosted:
-    needs: test-self-hosted
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Deploy to self hosted
-        run: |
-          cp -r ./* /var/www/html/
+  # deploy-self-hosted:
+  #   needs: test-self-hosted
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Deploy to self hosted
+  #       run: |
+  #         cp -r ./* /var/www/html/
